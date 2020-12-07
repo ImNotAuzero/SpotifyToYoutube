@@ -1,0 +1,26 @@
+{
+  "name": "spotifytoyoutube",
+  "version": "1.0.0",
+  "description": "Converts spotify urls to youtube urls",
+  "main": "index.js",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "node-spotify-api": "^1.1.1",
+    "readline-sync": "^1.4.10",
+    "scrape-yt": "^1.4.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ImNotAuzero/SpotifyToYoutube.git"
+  },
+  "author": "ImNotAuzero",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ImNotAuzero/SpotifyToYoutube/issues"
+  },
+  "homepage": "https://github.com/ImNotAuzero/SpotifyToYoutube#readme"
+}
