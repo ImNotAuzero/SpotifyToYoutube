@@ -1,14 +1,9 @@
 {
-  "name": "spotifytoyoutube",
+  "name": "spotitube",
   "version": "1.0.0",
-  "description": "Converts spotify urls to youtube urls",
+  "description": "Convert Spotify URLs to Youtube equivalents",
   "main": "index.js",
-  "dependencies": {
-    "chalk": "^4.1.0",
-    "node-spotify-api": "^1.1.1",
-    "readline-sync": "^1.4.10",
-    "scrape-yt": "^1.4.6"
-  },
+  "dependencies": {},
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

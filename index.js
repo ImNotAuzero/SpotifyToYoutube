@@ -1,42 +1,63 @@
 /* jshint esversion: 9 */
 
-const readline = require('readline-sync');
-const ytscraper = require('scrape-yt');
-const chalk = require('chalk');
-const auth = require('./auth.json');
+/** Imports */
+let ytscraper = require('scrape-yt');
 let Spotify = require('node-spotify-api');
-let spotify = new Spotify({ id: auth.spotify.client, secret: auth.spotify.secret });
 
-let url = readline.question('Input a spotify URL: ');
-while(!url.includes('spotify.com')) url = readline.question('Input a spotify URL: ');
-
-let newUrl = String(url.split(/(?<name>https:\/\/open.spotify.com\/track\/)/g)[2]).split('?');
-
-spotify.request(`https://api.spotify.com/v1/tracks/${newUrl[0]}`)
-  .then(async (res) => {
-    if(res.is_local) {
-      readline.question('Track is a local track... Press any key to exit.');
-      return process.exit(1);
-      //return console.log('Track is a local track...');
+class Spotitube {
+  /**
+   * @param {Object} auth - Containing Spotify keys
+   */
+  constructor(auth) {
+    if(!auth || !auth.client || !auth.secret) {
+      throw new Error(`Spotify client and secret keys must be supplied via an object.`);
     }
-    await searchYT(res);
-  })
-  .catch(async (e) => {
-    if(e) return console.log(e);
-  })
+    this.auth = { id: auth.client, secret: auth.secret };
+    this.spotify = new Spotify({ id: this.auth.id, secret: this.auth.secret });
+  }
 
-async function searchYT(data) {
-  ytscraper.search(`${data.name} by ${data.artists[0].name}`)
-    .then(async (res) => {
-      if(!res.length) {
-        readline.question('Track was not found on youtube... Press any key to exit');
-        return process.exit(1);
-      }
-      console.log(`Track was found on Youtube!\n\nTrack Name: ${chalk.blue(res[0].title)} Length: ${chalk.blue(res[0].duration + 's')}\nThumbnail: ${chalk.blue(res[0].thumbnail)}\nURL: https://www.youtube.com/watch?v=${res[0].id}`)
-      readline.question('\nPress any key to exit...');
-      return process.exit(1);
-    })
-    .catch(async (e) => {
-      if(e) return console.log(e);
-    })
+  /**
+   * Function used to convert urls
+   * @param {String} url - The Spotify URL
+   * 
+   * @returns {Array} With Youtube equivalent data
+   */
+  async convert(url) {
+    if(!url || !url.includes('spotify.com')) throw new Error(`No or an Invalid Spotify URL was provided.`);
+    return await this._convert(url);
+  }
+
+  /**
+   * Sub function to convert stuff
+   * @private
+   * @param {String} url - The Spotify URL
+   * 
+   * @returns {Array} Array of Youtube URLS
+   */
+  async _convert(url) {
+    /** Split url to contain track ID only */
+    let newUrl = String(url.split(/(?<name>https:\/\/open.spotify.com\/track\/)/g)[2]).split('?');
+
+    return new Promise(async (resolve, reject) => {
+      await this.spotify.request(`https://api.spotify.com/v1/tracks/${newUrl[0]}`, async (err, data) => {
+      if(err) throw new Error(err);
+      let results = await this.ytSearch(data), tracks = [];
+      results.forEach(track => { tracks.push(`https://www.youtube.com/watch?v=${track.id}`);});
+      return resolve(tracks);
+      });
+    });
+  }
+
+  /**
+   * Function used to search Youtube for the song
+   * @private
+   * @param {Object} data of Spotify song data
+   * 
+   * @returns {Object} Object With youtube equivalent data
+   */
+  async ytSearch(data) {
+    return await ytscraper.search(`${data.name} by ${data.artists[0].name}`);
+  }
 }
+
+module.exports = Spotitube;

@@ -1,25 +1,29 @@
-# SpotifyToYoutube
-Convert Spotify URLs to Youtube URLs!
+# SpotifyToYoutube (Spotitube)
+An easy way to convert Spotify URLs to Youtube equivalents
 
 ## Prerequisites
-You will need to generate a Spotify web application, to gain your Spotify client and secret tokens.
-You will NOT need Youtube tokens as no tokens are required on this repo.
-
-You will need to create an auth.json file. This repo does not support ENV files.
-The auth.json file should look like:
-```
-{
-  "spotify": {
-    "client": "",
-    "secret": ""
-  }
-}
-```
+npm install spotitube
 
 ## How to use
-To launch the app
-```
-node .
-```
-From there, key in the Spotify URL and the output will be a Youtube URL, alongside the track name, channel name, thumbnail url and the track length in seconds.
+There is a single function that you can use in order to convert urls.
+However, before we get to the function. You need to initalise Spotitube. This can be done like so:
 
+```js
+let Spotitube = require('spotitube');
+let spotitube = new Spotitube({ client: '<Your Spotify App Client key>', secret: '<Your Spotify App Secret key>'})
+```
+
+From there a simple function is used to convert the url. However, you must await the function to return a value. Otherwise you will recieve a Promise.
+```js
+// Url has to similar: This can be done via sharing the song link!
+// https://open.spotify.com/track/<stuff>
+(async () => { await console.log(Spot.convert('Your cool Spotify URL')); })(); // Returns an array of track urls of the Youtube equivalent.
+```
+
+### Example
+```js
+let Spotitube = require('spotitube');
+let spotitube = new Spotitube({ client: '<Your Spotify App Client key>', secret: '<Your Spotify App Secret key>'})
+
+(async () => { await console.log(Spot.convert('Your cool Spotify URL')); })();
+```
